@@ -1,0 +1,76 @@
+
+
+function createAjaxObject(){
+  var xmlhttp;
+  if(window.ActiveXObject){
+    try{
+      xmlhttp = new ActiveXObject();
+    }catch(e){
+      xmlhttp = false;
+    }
+  }
+  else{
+    try{
+      xmlhttp = new XMLHttpRequest();
+    }catch(e){
+      xmlhttp = false;
+    }
+  }
+
+  return xmlhttp;
+}
+
+function processForm(){
+  var xmlhttp;
+  var username = document.getElementById("username").value;
+  var password = document.getElementById("password").value;
+  xmlhttp = createAjaxObject();
+  xmlhttp.onreadystatechange=function(){
+  if(xmlhttp.readyState == 4 && xmlhttp.status ==200){
+    document.getElementById("loginErrors").innerHTML = xmlhttp.responseText;
+	var message = document.getElementById("success").innerHTML;
+	if(message === "Logging you in..."){
+		window.location = "http://"+window.location.hostname+"/";
+	}
+  }
+}
+
+  xmlhttp.open("POST","http://"+window.location.hostname+"/index.php/Main/loginValidation",true);
+  xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+  xmlhttp.send("username="+username+"&password="+password);
+
+}
+
+function registerUser(){
+
+
+  var xmlhttp = createAjaxObject();
+  var registerUsername= document.getElementById("register_username").value;
+  var registerFirstName= document.getElementById("register_firstName").value;
+  var registerPassword= document.getElementById("register_password").value;
+  var registerCPassword= document.getElementById("register_cpassword").value;
+  var registerEmail= document.getElementById("register_email").value;
+  var registerTerms = document.getElementById("register_terms").checked;
+
+
+
+  xmlhttp.onreadystatechange = function(){
+    if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+      document.getElementById("registerErrors").innerHTML = xmlhttp.responseText;
+    }
+  }
+  xmlhttp.open("POST","http://"+window.location.hostname+"/index.php/Main/signupValidation",true);
+  xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+  xmlhttp.send("registerTerms="+registerTerms+"&registerUsername="+registerUsername+"&registerFirstName="+registerFirstName+"&registerPassword="+registerPassword+"&registerCPassword="+registerCPassword+"&registerEmail="+registerEmail);
+
+}
+
+
+$('#login-form').submit(function(event){
+  processForm();
+  event.preventDefault();
+});
+$('#register-form').submit(function(event){
+  registerUser();
+  event.preventDefault();
+});
